@@ -16,5 +16,12 @@
             "name": "BakhadyrovF",
             "email": "BakhadyrovF@gmail.com"
         }
-    ]
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bakhadyrovf\\EasyFilter\\Providers\\QueryFilterProvider"
+            ]
+        }
+    }
 }
