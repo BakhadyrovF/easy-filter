@@ -21,11 +21,6 @@ class MakeFilterClass extends Command
     protected $description = 'Make a filter class';
 
     /**
-     * The Base Path
-     */
-    protected const BASE_PATH = 'Filters';
-
-    /**
      * The Class Name
      *
      * @var string
@@ -84,7 +79,7 @@ class MakeFilterClass extends Command
 
     protected function abortIfFilterExists()
     {
-        if(file_exists(app_path(self::BASE_PATH) . '/' . $this->argument('className') . '.php')) {
+        if(file_exists(app_path(config('easy-filter.base-folder')) . '/' . $this->argument('className') . '.php')) {
             $this->error('Filter already exists');
             die();
         }
@@ -93,8 +88,8 @@ class MakeFilterClass extends Command
 
     protected function makeBaseDirectory()
     {
-        if (!is_dir(app_path(self::BASE_PATH))) {
-            mkdir(app_path(self::BASE_PATH));
+        if (!is_dir(app_path(config('easy-filter.base-folder')))) {
+            mkdir(app_path(config('easy-filter.base-folder')));
         }
     }
 
@@ -135,11 +130,11 @@ class MakeFilterClass extends Command
     {
         if(!empty($this->folders)) {
 
-            $this->filePath = app_path(self::BASE_PATH . '/' . implode('/', $this->folders) . '/' . $this->className) . '.php';
+            $this->filePath = app_path(config('easy-filter.base-folder') . '/' . implode('/', $this->folders) . '/' . $this->className) . '.php';
 
         } else {
 
-            $this->filePath = app_path(self::BASE_PATH . '/' . $this->className) . '.php';
+            $this->filePath = app_path(config('easy-filter.base-folder') . '/' . $this->className) . '.php';
 
         }
     }
@@ -162,7 +157,7 @@ class MakeFilterClass extends Command
 
     protected function prepareDirectories()
     {
-        $folderWithPath = app_path(self::BASE_PATH) . '/';
+        $folderWithPath = app_path(config('easy-filter.base-folder')) . '/';
         if (!empty($this->folders)) {
             foreach ($this->folders as $folder) {
                 $folderWithPath .= $folder . '/';

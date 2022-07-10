@@ -49,7 +49,7 @@ class QueryFilter implements QueryFilterContract
     protected function setParameters()
     {
         try {
-            $parameters = Validator::make(request('filters') ?? [], [
+            $parameters = Validator::make(request(config('easy-filter.base-parameter')) ?? [], [
                 '*' => ['filled', 'string']
             ])->validated();
         } catch (\Exception) {
