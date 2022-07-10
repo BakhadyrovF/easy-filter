@@ -3,7 +3,7 @@
 namespace Bakhadyrovf\EasyFilter;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class QueryFilter implements QueryFilterContract
@@ -48,14 +48,38 @@ class QueryFilter implements QueryFilterContract
 
     protected function setParameters()
     {
-        $parameters = request('filters');
+        try {
+            $parameters = Validator::make(request('filters') ?? [], [
+                '*' => ['filled', 'string']
+            ])->validated();
+        } catch (\Exception) {
+            return $this;
+        }
 
         if (!empty($parameters)) {
             foreach ($parameters as $parameter => $value) {
-                $this->parameters[Str::camel($parameter)] = $value;
+                $this->parameters[$this->validateParameter($parameter)] = $this->validateValue($value);
             }
         }
 
         return $this;
+    }
+
+    protected function validateParameter(string $parameter)
+    {
+        if (Str::contains($parameter, '_')) {
+            return Str::camel($parameter);
+        }
+
+        return $parameter;
+    }
+
+    protected function validateValue(string $value)
+    {
+        if (Str::contains($value, '[') && Str::contains($value, ']')) {
+            return explode(',', str_replace(['[', ']'], '', $value));
+        }
+
+        return $value;
     }
 }

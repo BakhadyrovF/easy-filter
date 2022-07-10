@@ -102,7 +102,7 @@ class MakeFilterClass extends Command
     {
         $contents = '<?php ' . PHP_EOL . PHP_EOL;
         $contents .= 'namespace ' . $this->namespace . PHP_EOL . PHP_EOL;
-        $contents .= 'use BakhadyrovF\EasyFilter\QueryFilter;' . PHP_EOL . PHP_EOL;
+        $contents .= 'use Bakhadyrovf\EasyFilter\QueryFilter;' . PHP_EOL . PHP_EOL;
         $contents .= 'class ' . $this->className . ' extends QueryFilter' . PHP_EOL;
         $contents .= '{' . PHP_EOL . PHP_EOL . '}';
 
