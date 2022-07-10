@@ -100,7 +100,7 @@ Class ArticleFilter extends QueryFilter
 ```
 
 
-If your parameter can take multiple values, you can use array:
+If your parameter can take multiple values, you can use brackets:
 ```
 example.com/articles?filters[category_ids]=[1,2,3,4,5]
 ```
