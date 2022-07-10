@@ -102,13 +102,13 @@ Class ArticleFilter extends QueryFilter
 
 If your parameter can take multiple values, you can use **comma**:
 ```
-example.com/articles?filters[categories_id]=1,2,3,4,5
+example.com/articles?filters[category_ids]=1,2,3,4,5
 ```
 As usual, these values will be in the method's second argument
 ```php
 Class ArticleFilter extends QueryFilter 
 {
-    public function categoriesId(Builder $builder, $values)
+    public function categoryIds(Builder $builder, $values)
     {
         return $builder->whereHas('categories', function ($query) use ($values) {
             return $query->whereIn('id', $values);
