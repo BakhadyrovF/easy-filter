@@ -55,8 +55,8 @@ class ArticleFilter extends QueryFilter
 - $builder - Illuminate\Database\Eloquent\Builder
 - $value - Value taken from request
 
-And you can try filter using **filter** method, method takes a **model class** that must be filtered or **Illuminate\Database\Eloquent\Builder**.
-Method return's **Illuminate\Database\Eloquent\Builder**, so you can continue your query building;
+And you can try filter using **filter** method, method takes a **model class** that must be filtered or **Illuminate\Database\Eloquent\Builder**.    
+Method return's **Illuminate\Database\Eloquent\Builder**, so you can continue your query building     
 In **app\Http\Controllers\ArticleController**:
 ```php
 use App\Filters\ArticleFilter;
