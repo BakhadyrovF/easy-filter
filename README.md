@@ -100,9 +100,9 @@ Class ArticleFilter extends QueryFilter
 ```
 
 
-If your parameter can take multiple values, you can use **comma**:
+If your parameter can take multiple values, you can use array:
 ```
-example.com/articles?filters[category_ids]=1,2,3,4,5
+example.com/articles?filters[category_ids]=[1,2,3,4,5]
 ```
 As usual, these values will be in the method's second argument
 ```php
