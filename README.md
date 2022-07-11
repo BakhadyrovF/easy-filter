@@ -40,7 +40,7 @@ class ArticleFilter extends QueryFilter
 ```
 
 Now, you can write your methods inside filter class.
-Let's add first method and try filter our query.
+Let's add first method and try to filter our query.
 In **app/Filters/ArticleFilter**:
 ```php
 class ArticleFilter extends QueryFilter
