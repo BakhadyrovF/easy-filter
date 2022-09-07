@@ -136,7 +136,7 @@ Class ArticleFilter extends QueryFilter
 }
 ```
 
-**Ignoring parameters**
+**Ignoring parameters**    
 For example if you want to ignore **post_ids** parameter:
 ```
 https://example.com/users?name=Firuzbek&post_ids=[1,10,25]
