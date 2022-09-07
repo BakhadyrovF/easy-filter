@@ -137,11 +137,11 @@ Class ArticleFilter extends QueryFilter
 ```
 
 **Ignoring parameters**
-For example if you want to ignore **post_ids** parameter from filtering:
+For example if you want to ignore **post_ids** parameter:
 ```
 https://example.com/users?name=Firuzbek&post_ids=[1,10,25]
 ```
-You can provide exceptions array of **method names** or **query parameters** as a second argument to **filter** method:
+You can provide exceptions array of **method names** or **query parameters** as a second argument to **filter()** method:
 ```php
 use App\Filters\UserFilter;
 use App\Models\User;
