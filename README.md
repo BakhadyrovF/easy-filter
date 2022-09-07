@@ -118,7 +118,8 @@ Class ArticleFilter extends QueryFilter
 }
 ```
 
-**Multiple values**
+**Multiple values**    
+     
 If your parameter can take multiple values, you can use brackets:
 ```
 example.com/articles?category_ids=[1,2,3,4,5]
@@ -137,6 +138,7 @@ Class ArticleFilter extends QueryFilter
 ```
 
 **Ignoring parameters**    
+     
 For example if you want to ignore **post_ids** parameter:
 ```
 https://example.com/users?name=Firuzbek&post_ids=[1,10,25]
