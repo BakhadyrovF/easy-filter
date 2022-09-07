@@ -2,11 +2,13 @@
 
 namespace Bakhadyrovf\EasyFilter;
 
+use Arr;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class QueryFilter implements QueryFilterContract
+class QueryFilter
 {
     protected ?array $parameters;
     protected Builder $builder;
@@ -14,7 +16,7 @@ class QueryFilter implements QueryFilterContract
     /**
      * @inheritDoc
      */
-    public static function filter(string|Builder $builder): Builder
+    public static function filter(string|Builder $builder, array $except = []): Builder
     {
         $builder = $builder instanceof Builder
             ? $builder
@@ -22,7 +24,7 @@ class QueryFilter implements QueryFilterContract
 
         return (new static())
             ->setBuilder($builder)
-            ->setParameters()
+            ->setParameters($except)
             ->apply();
     }
 
@@ -46,19 +48,27 @@ class QueryFilter implements QueryFilterContract
         return $this;
     }
 
-    protected function setParameters()
+    protected function setParameters(array $except = [])
     {
         try {
-            $parameters = Validator::make(request(config('easy-filter.base-parameter')) ?? [], [
+            $parameters = Validator::make(request()->query(), [
                 '*' => ['filled', 'string']
             ])->validated();
-        } catch (\Exception) {
+        } catch (Exception) {
             return $this;
         }
 
+        $exceptions = array_map(function ($item) {
+            return Str::snake($item);
+        }, $except);
+
         if (!empty($parameters)) {
-            foreach ($parameters as $parameter => $value) {
-                $this->parameters[$this->validateParameter($parameter)] = $this->validateValue($value);
+            foreach (Arr::except($parameters, $exceptions) as $parameter => $value) {
+                if (!$validatedValue = $this->validateValue($value)) {
+                    continue;
+                }
+
+                $this->parameters[$this->validateParameter($parameter)] = $validatedValue;
             }
         }
 
@@ -77,9 +87,15 @@ class QueryFilter implements QueryFilterContract
     protected function validateValue(string $value)
     {
         if (Str::contains($value, '[') && Str::contains($value, ']')) {
-            return explode(',', str_replace(['[', ']'], '', $value));
+            if (!$replaced = str_replace(['[', ']'], '', $value)) {
+                return false;
+            }
+
+            return explode(',', $replaced);
         }
 
-        return $value;
+        return !empty($value)
+            ? $value
+            : false;
     }
 }
