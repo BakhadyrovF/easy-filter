@@ -1,5 +1,4 @@
 # Easy Query Filter
-### **The package is written for experience.**
 **This is a package that filter queries with user's custom methods.**
 
 # Dependencies
@@ -18,12 +17,23 @@ php artisan vendor:publish --tag=easy-filter-config
 ```
 
 # Usage
-First of all, you must create a filter class:
+### Important:
+The namespace for filters by default `App\Filters` and each filter class before creating expects that you already have **Eloquent Model** with the namespace standards as follows:
+|Filter|Model|
+|-----|-----------|
+|`App\Filters\UserFilter`|`App\Models\User`|
+|`App\Filters\Dashboard\ArticleFilter`|`App\Models\Dashboard\Article`|
+|`App\EloquentFilters\TagFilter`|`App\Models\Tag`|
+
+
+First of all you must create filter class:
 ```
 php artisan make:filter ArticleFilter
 ```
 This command creates **ArticleFilter** class in your project's **app/Filters** folder.
-You can change base folder's name in your config file:
+(*Also this command adds trait **Filterable** to your **Eloquent Model***)
+
+You can change base folder's name in your config file *(**Namespace** will be changed as well)*:
 ```php
 <?php
 
@@ -58,6 +68,35 @@ class ArticleFilter extends QueryFilter
 }
 ```
 
+If the namespace of your **Model** or **Filter** does not match the above, you can use `--model` option:
+For example - we have model with namespace `App\Models\Article`,     
+we want to create a filter class with namespace `App\Filters\Dashboard\ArticleFilter`:
+```
+php artisan make:filter Dashboard/ArticleFilter --model=App\Models\Article
+```
+In order for a filter that does not match the namespace with the model, you must add method on your `App\Models\Article` class:
+```php
+<?php
+
+namespace App\Models\Admin;
+
+use Bakhadyrovf\EasyFilter\Traits\Filterable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Filters\Dashboard\ArticleFilter;
+
+class Discount extends Model
+{
+    use HasFactory, Filterable;
+    
+    public function provideFilter()
+    {
+        return ArticleFilter::class;
+    }
+}
+```
+This method will point to a specific filter class.
+
 Now, you can write your methods inside filter class.
 Let's add first method and try to filter our query.
 In **app/Filters/ArticleFilter**:
@@ -74,11 +113,10 @@ class ArticleFilter extends QueryFilter
 - $builder - Illuminate\Database\Eloquent\Builder
 - $value - Value taken from request
 
-And you can try filter using **filter** method, method takes a **model class** that must be filtered or **Illuminate\Database\Eloquent\Builder**.    
-Method return's **Illuminate\Database\Eloquent\Builder**, so you can continue your querying.   
+And you can try to filter query using `filter()` method on your **Eloquent Model**.
+This method is basic [Eloquent Scope](https://laravel.com/docs/9.x/eloquent#query-scopes) so you can use it as usually.
 In **app\Http\Controllers\ArticleController**:
 ```php
-use App\Filters\ArticleFilter;
 use App\Models\Article;
 use Illuminate\Http\Request;
 
@@ -86,7 +124,7 @@ class ArticleController extends Controller
 {
     public function index(Request $request)
     {
-        $articles = ArticleFilter::filter(Article::class)
+        $articles = Article::filter()
             ->orderByDesc('id')
             ->get();
             
@@ -141,9 +179,8 @@ For example if you want to ignore **post_ids** parameter from filtering:
 ```
 https://example.com/users?name=Firuzbek&post_ids=[1,10,25]
 ```
-You can provide exceptions array of **method names** or **query parameters** as a second argument to **filter** method:
+You can provide exceptions array of **method names** or **query parameters** as an argument to `filter()` method:
 ```php
-use App\Filters\UserFilter;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -151,7 +188,8 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $articles = UserFilter::filter(User::class, ['postIds']) // Or post_ids
+        $articles = User::active()
+            ->filter(['postIds']) // Or post_ids
             ->orderByDesc('created_at')
             ->get();
             
@@ -159,3 +197,4 @@ class UserController extends Controller
     }
 }
 ```
+

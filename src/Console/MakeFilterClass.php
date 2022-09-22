@@ -154,7 +154,7 @@ class MakeFilterClass extends Command
 
     protected function setNamespace()
     {
-        $namespace = 'App\Filters\\';
+        $namespace = 'App\\' . ucfirst(config('easy-filter.base-folder')) . '\\';
         if (!empty($this->folders)) {
 
             foreach ($this->folders as $folder) {
