@@ -68,6 +68,7 @@ class ArticleFilter extends QueryFilter
 }
 ```
     
+        
 If the namespace of your **Model** or **Filter** does not match the above, you can use `--model` option:
 For example - we have model with namespace `App\Models\Article`,     
 we want to create a filter class with namespace `App\Filters\Dashboard\ArticleFilter`:
