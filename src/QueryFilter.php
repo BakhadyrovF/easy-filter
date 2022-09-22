@@ -13,22 +13,7 @@ class QueryFilter
     protected ?array $parameters;
     protected Builder $builder;
 
-    /**
-     * @inheritDoc
-     */
-    public static function filter(string|Builder $builder, array $except = []): Builder
-    {
-        $builder = $builder instanceof Builder
-            ? $builder
-            : app($builder)->query();
-
-        return (new static())
-            ->setBuilder($builder)
-            ->setParameters($except)
-            ->apply();
-    }
-
-    protected function apply(): Builder
+    public function apply(): Builder
     {
         if (!empty($this->parameters)) {
             foreach ($this->parameters as $parameter => $value) {
@@ -41,14 +26,14 @@ class QueryFilter
         return $this->builder;
     }
 
-    protected function setBuilder(Builder $builder)
+    public function setBuilder(Builder $builder)
     {
         $this->builder = $builder;
 
         return $this;
     }
 
-    protected function setParameters(array $except = [])
+    public function setParameters(array $except = [])
     {
         try {
             $parameters = Validator::make(request()->query(), [

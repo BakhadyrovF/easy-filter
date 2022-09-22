@@ -11,7 +11,7 @@ class MakeFilterClass extends Command
      *
      * @var string
      */
-    protected $signature = 'make:filter {className}';
+    protected $signature = 'make:filter {className} {--model=}';
 
     /**
      * The console command description.
@@ -56,6 +56,16 @@ class MakeFilterClass extends Command
     protected string $namespace;
 
     /**
+     * @const Trait namespace
+     */
+    protected const TRAIT_NAMESPACE = 'Bakhadyrovf\EasyFilter\Traits\Filterable';
+
+    /**
+     * @const Trait name
+     */
+    protected const TRAIT_NAME = 'Filterable';
+
+    /**
      * Execute the console command.
      *
      */
@@ -65,6 +75,8 @@ class MakeFilterClass extends Command
 
         $this->abortIfFilterExists();
 
+        $this->useTrait();
+
         $this->setFoldersAndClassName();
         $this->setFilePath();
         $this->setNamespace();
@@ -72,6 +84,7 @@ class MakeFilterClass extends Command
         $this->setContents();
 
         file_put_contents($this->filePath, $this->contents);
+
 
         $this->info('Filter has been created');
 
@@ -167,6 +180,57 @@ class MakeFilterClass extends Command
                 }
             }
         }
+    }
+
+    protected function useTrait()
+    {
+        $modelNamespace = $this->option('model')
+            ? $this->option('model')
+            : $this->getFilterableNamespace();
+
+        $path = $this->getFilterablePath($modelNamespace);
+
+        $contents = $this->getContentsWithTrait($path);
+
+        file_put_contents($path, $contents);
+    }
+
+    protected function getFilterableNamespace()
+    {
+        $modelNamespace = 'App\\Models\\' . str_replace(['/', 'Filter'], ['\\', ''], $this->argument('className'));
+
+        if (!class_exists($modelNamespace)) {
+            $this->error('Model for this filter does not exist!');
+            $this->info('Model namespace must be - ' . $modelNamespace . ' or you can provide model namespace manually with `--model=App\Models\Admin\User` option.');
+            die();
+        }
+
+        return $modelNamespace;
+    }
+
+    protected function getFilterablePath(string $namespace)
+    {
+        return app_path('Models/' . str_replace(['App\\Models\\', '\\'], ['', '/'], $namespace) . '.php');
+    }
+
+    protected function getContentsWithTrait($path)
+    {
+        $contents = file_get_contents($path);
+        $className = str_replace('.php', '', basename($path));
+
+        $firstUseOperatorPosition = strpos($contents, 'use');
+        $firstUseOperatorEndLinePosition = strpos($contents, ';', $firstUseOperatorPosition);
+        $firstUseLine = substr($contents, $firstUseOperatorPosition, $firstUseOperatorEndLinePosition - $firstUseOperatorPosition + 2);
+        $newUseLine =  'use '. self::TRAIT_NAMESPACE . ';' . PHP_EOL . $firstUseLine;
+        $contents = str_replace($firstUseLine, $newUseLine, $contents);
+
+        $classNamePosition = strpos($contents, $className . ' extends');
+        $classUseOperatorPosition = strpos($contents, 'use', $classNamePosition);
+        $classUseOperatorEndLinePosition = strpos($contents, ';', $classUseOperatorPosition);
+        $classUseLine = substr($contents, $classUseOperatorPosition, $classUseOperatorEndLinePosition - $classUseOperatorPosition);
+        $newClassUseLine = $classUseLine . ', ' . self::TRAIT_NAME;
+
+        return str_replace($classUseLine, $newClassUseLine, $contents);
     }
 
 }
