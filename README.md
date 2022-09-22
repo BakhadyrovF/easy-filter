@@ -30,8 +30,8 @@ First of all you must create filter class:
 ```
 php artisan make:filter ArticleFilter
 ```
-This command creates **ArticleFilter** class in your project's **app/Filters** folder.
-(*Also this command adds trait **Filterable** to your **Eloquent Model***)
+This command creates **ArticleFilter** class in your project's **app/Filters** folder.    
+*Also this command adds trait **Filterable** to your **Eloquent Model**.*
 
 You can change base folder's name in your config file *(**Namespace** will be changed as well)*:
 ```php
