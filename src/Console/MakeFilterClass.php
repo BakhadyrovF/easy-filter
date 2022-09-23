@@ -201,7 +201,7 @@ class MakeFilterClass extends Command
 
         if (!class_exists($modelNamespace)) {
             $this->error('Model for this filter does not exist!');
-            $this->info('Model namespace must be - ' . $modelNamespace . ' or you can provide model namespace manually with `--model=App\Models\Admin\User` option.');
+            $this->info('Model namespace must be - ' . $modelNamespace . ' or you can provide model namespace manually with `--model=App\\\Models\\\Admin\\\User` option.');
             die();
         }
 
