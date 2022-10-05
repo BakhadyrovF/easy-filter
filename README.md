@@ -200,7 +200,7 @@ class UserController extends Controller
 
 **Multiple filters**     
 If you have multiple filter classes for one model, you can provide specific filter class as a second argument.
-This filter class will be used even if you have a provideFilter method on the model:
+This filter class will be used even if you have a `provideFilter()` method on the model:
 ```php
 use App\Models\Post;
 use App\Filters\Dashboard\PostFilter;
