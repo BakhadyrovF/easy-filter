@@ -192,7 +192,15 @@ class MakeFilterClass extends Command
 
         $contents = $this->getContentsWithTrait($path);
 
-        file_put_contents($path, $contents);
+        if ($contents) {
+            file_put_contents($path, $contents);
+
+            return true;
+        }
+
+        $this->info('Trait filterable already exists, Skipping.');
+
+        return true;
     }
 
     protected function getFilterableNamespace()
@@ -201,7 +209,7 @@ class MakeFilterClass extends Command
 
         if (!class_exists($modelNamespace)) {
             $this->error('Model for this filter does not exist!');
-            $this->info('Model namespace must be - ' . $modelNamespace . ' or you can provide model namespace manually with `--model=App\\\Models\\\Admin\\\User` option.');
+            $this->info('Model namespace must be - ' . $modelNamespace . ' or you can provide model namespace manually with `--model=App\\\Models\\\User` option.');
             die();
         }
 
@@ -216,6 +224,10 @@ class MakeFilterClass extends Command
     protected function getContentsWithTrait($path)
     {
         $contents = file_get_contents($path);
+        if (str_contains($contents, self::TRAIT_NAME) && str_contains($contents, self::TRAIT_NAMESPACE)) {
+            return false;
+        }
+
         $className = str_replace('.php', '', basename($path));
 
         $firstUseOperatorPosition = strpos($contents, 'use');

@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait Filterable
 {
-    public function scopeFilter(Builder $builder, array $except = [])
+    public function scopeFilter(Builder $builder, array $except = [], string $filterClass = null)
     {
-        $filterClass = method_exists($this, 'provideFilter') ? $this->provideFilter() : $this->getFilterClass();
+        $filterClass ??= method_exists($this, 'provideFilter') ? $this->provideFilter() : $this->getFilterClass();
 
         if (!class_exists($filterClass)) {
             $filterClass = $filterClass . 'Filter';

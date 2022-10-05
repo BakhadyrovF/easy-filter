@@ -72,7 +72,7 @@ class ArticleFilter extends QueryFilter
 If the namespace of your **Model** or **Filter** does not match the above, you can use `--model` option:
 For example - we have model with namespace `App\Models\Article`, we want to create a filter class with namespace `App\Filters\Dashboard\ArticleFilter`:
 ```
-php artisan make:filter Dashboard/ArticleFilter --model=App\Models\Article
+php artisan make:filter Dashboard/ArticleFilter --model=App\\Models\\Article
 ```
 In order for a filter that does not match the namespace with the model, you must add method on your `App\Models\Article` class:
 ```php
@@ -156,7 +156,7 @@ Class ArticleFilter extends QueryFilter
 }
 ```
 
-**Multiple values**
+**Multiple values**   
 If your parameter can take multiple values, you can use brackets:
 ```
 example.com/articles?category_ids=[1,2,3,4,5]
@@ -174,7 +174,7 @@ Class ArticleFilter extends QueryFilter
 }
 ```
 
-**Ignoring parameters**
+**Ignoring parameters**    
 For example if you want to ignore **post_ids** parameter from filtering:
 ```
 https://example.com/users?name=Firuzbek&post_ids=[1,10,25]
@@ -188,12 +188,34 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $articles = User::active()
+        $users = User::active()
             ->filter(['postIds']) // Or post_ids
             ->orderByDesc('created_at')
             ->get();
             
-        return $articles;
+        return $users;
+    }
+}
+```
+
+**Multiple filters**     
+If you have multiple filter classes for one model, you can provide specific filter class as a second argument.
+This filter class will be used even if you have a provideFilter method on the model:
+```php
+use App\Models\Post;
+use App\Filters\Dashboard\PostFilter;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    public function index(Request $request)
+    {
+        $posts = Post::active()
+            ->filter(['sort_by'], PostFilter::class)  
+            ->orderByDesc('created_at')
+            ->get();
+            
+        return $posts;
     }
 }
 ```
